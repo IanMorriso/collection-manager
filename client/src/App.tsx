@@ -12,6 +12,7 @@ import {
   InputAdornment,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import { MyCollection } from './pages/MyCollection/MyCollection';
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -37,6 +38,7 @@ function App() {
   };
 
   return (
+    
     <Box sx={{ flexGrow: 1, minHeight: '100vh' }}>
       <AppBar position="static" sx={{ mb: 4 }}>
         <Container>
@@ -45,6 +47,8 @@ function App() {
           </Typography>
         </Container>
       </AppBar>
+
+      <MyCollection /> 
 
       <Container>
         <Box sx={{ mb: 4 }}>
