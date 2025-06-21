@@ -18,8 +18,9 @@ function App() {
   const [cards, setCards] = useState<any[]>([]);
 
   const handleSearch = async () => {
+    console.log('Searching for:', searchQuery);
     try {
-      const response = await fetch('http://localhost:3001/api/scrape', {
+      const response = await fetch('http://localhost:3001/api/card', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -55,8 +56,8 @@ function App() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            slotProps={{
-              input: {
+            InputProps={{
+          
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton onClick={handleSearch}>
@@ -64,7 +65,7 @@ function App() {
                   </IconButton>
                 </InputAdornment>
                 ),
-              }
+              
             }}
           />
         </Box>

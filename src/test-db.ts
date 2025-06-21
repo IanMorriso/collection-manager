@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 async function testConnection() {
     try {
-        await mongoose.connect('mongodb://localhost:27017/web-scraper');
+        await mongoose.connect('mongodb://localhost:27017/card-db');
         console.log('Successfully connected to MongoDB.');
         
         // Create a simple test collection
