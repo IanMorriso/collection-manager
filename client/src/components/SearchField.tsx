@@ -1,54 +1,35 @@
+import { on } from 'events';
 import { SearchButton } from './SearchButton'
 import {
     Box,
-    TextField,
+    TextField
 } from '@mui/material'; 
 
 interface SearchFieldProps {
     value: string;
+    placeholder?: string;
+    parameter: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onSearch: () => void;
+    onSearch?: () => void;
+    showButton?: boolean;
 }
 
-export function SearchField({ value, onChange, onSearch }: SearchFieldProps) {
+export function SearchField({ value, placeholder, onChange, onSearch, showButton }: SearchFieldProps) {
     return (
         <Box sx={{ mb: 4 }}>
+            
             <TextField
                 fullWidth
-                variant="outlined"
-                placeholder="Search for a card..."
+                placeholder={placeholder || "Search for a card..."}
                 value={value}
                 onChange={onChange}
-                onKeyDown={(e) => e.key === 'Enter' && onSearch()}
+                onKeyDown={showButton ? (e) => e.key === 'Enter' && onSearch && onSearch() : undefined}
                 InputProps={{
-                    endAdornment: (
+                    endAdornment: showButton && onSearch ?(
                         <SearchButton onClick={onSearch} />
-                    ),
+                    ) : undefined,
                 }}
             />
         </Box>
     );
 }
-
-/**
-<Box sx={{ mb: 4 }}>
-    <TextField
-    fullWidth
-    variant="outlined"
-    placeholder="Search for a card..."
-    value={searchQuery}
-    onChange={(e) => setSearchQuery(e.target.value)}
-    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-    InputProps={{
-    
-        endAdornment: (
-        <InputAdornment position="end">
-            <IconButton onClick={handleSearch}>
-            <SearchIcon />
-            </IconButton>
-        </InputAdornment>
-        ),
-        
-    }}
-    />
-</Box> */
