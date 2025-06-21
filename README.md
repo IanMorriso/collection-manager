@@ -1,9 +1,9 @@
-# Web Scraper Application
+# Trading Card Manager
 
-A web scraping application built with TypeScript, React, and MongoDB.
+A Trading Card Manager application built with TypeScript, React, and MongoDB.
 
 ## Features
-- Web scraping using Cheerio and Axios
+- Third-Party API for card data collection
 - React frontend for managing scraping tasks
 - MongoDB for storing scraped data
 - RESTful API with Express
