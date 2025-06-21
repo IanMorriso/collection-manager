@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { scrapeRouter } from '../routes/scrape';
+import { cardRouter } from '../routes/card';
 
 dotenv.config();
 
@@ -19,7 +19,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/web-scrap
   .catch((err) => console.error('MongoDB connection error:', err));
 
 // Routes
-app.use('/api/scrape', scrapeRouter);
+app.use('/api/card', cardRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

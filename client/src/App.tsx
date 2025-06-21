@@ -3,23 +3,20 @@ import {
   AppBar,
   Box,
   Container,
-  TextField,
   Typography,
-  Card,
-  CardContent,
-  Grid,
-  IconButton,
-  InputAdornment,
 } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import { CardGrid } from './components/CardGrid';
+import { SearchField } from './components/SearchField';
+
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [cards, setCards] = useState<any[]>([]);
 
   const handleSearch = async () => {
+    console.log('Searching for:', searchQuery);
     try {
-      const response = await fetch('http://localhost:3001/api/scrape', {
+      const response = await fetch('http://localhost:3001/api/card', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -47,58 +44,12 @@ function App() {
       </AppBar>
 
       <Container>
-        <Box sx={{ mb: 4 }}>
-          <TextField
-            fullWidth
-            variant="outlined"
-            placeholder="Search for a card..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-            slotProps={{
-              input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={handleSearch}>
-                    <SearchIcon />
-                  </IconButton>
-                </InputAdornment>
-                ),
-              }
-            }}
-          />
-        </Box>
-
-        <Grid container spacing={3}>
-          {cards.map((card, index) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    {card.name}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Set: {card.setCode}
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Type: {card.type}
-                  </Typography>
-                  <Typography variant="body1" sx={{ mt: 2 }}>
-                    {card.text}
-                  </Typography>
-                  {card.prices && card.prices.length > 0 && (
-                    <Box sx={{ mt: 2 }}>
-                      <Typography variant="subtitle2">Latest Price:</Typography>
-                      <Typography variant="body2">
-                        ${card.prices[0].price} ({card.prices[0].provider})
-                      </Typography>
-                    </Box>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+        <SearchField
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onSearch={handleSearch}
+        />
+        <CardGrid cards={cards} />
       </Container>
     </Box>
   );
