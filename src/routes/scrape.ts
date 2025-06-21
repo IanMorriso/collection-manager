@@ -4,13 +4,14 @@ import cheerio from 'cheerio';
 import ScrapedData from '../models/ScrapedData';
 
 export const scrapeRouter = express.Router();
+const url = 'https://graphql.mtgjson.com/'
 
 scrapeRouter.post('/', async (req, res) => {
   try {
-    const { url } = req.body;
+    const { cardName } = req.body;
     
-    if (!url) {
-      return res.status(400).json({ error: 'URL is required' });
+    if (!cardName) {
+      return res.status(400).json({ error: 'Card name is required' });
     }
 
     const response = await axios.get(url);

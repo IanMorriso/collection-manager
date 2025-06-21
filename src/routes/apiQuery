@@ -1,0 +1,6 @@
+import express from 'express';
+import axios from 'axios';
+import cheerio from 'cheerio';
+
+export const scrapeRouter = express.Router();
+const url = 'https://graphql.mtgjson.com/'
