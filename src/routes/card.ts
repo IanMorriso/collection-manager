@@ -6,7 +6,7 @@ export const cardRouter = express.Router();
 cardRouter.post('/', async (req, res) => {
   console.log('Received request:', req.body);
   try {
-    const { cardName } = req.body;
+    const { cardName, setSymbol } = req.body;
 
     if (!cardName) {
       return res.status(400).json({ error: 'cardName is required' });
@@ -15,7 +15,7 @@ cardRouter.post('/', async (req, res) => {
     const query = `
       query {
         cards(
-          filter: { name_eq: "${cardName}" }
+          filter: { name_eq: "${cardName}", setCode_eq: "${setSymbol}"},
           page: { take: 100, skip: 0 }
           order: { order: ASC }
         ) {

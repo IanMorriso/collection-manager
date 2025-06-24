@@ -11,17 +11,18 @@ import { set } from 'mongoose';
 
 
 function App() {
-  const [searchQuery, setSearchQuery] = useState('');
+  //const [searchQuery, setSearchQuery] = useState('');
   const [cardName, setCardName] = useState('');
   const [setSymbol, setSetSymbol] = useState('');
+  const [condition, setCondition] = useState('');
 
   const [cards, setCards] = useState<any[]>([]);
 
   const handleSearch = async () => {
     // Only setting query to cardName for now
     // Need to add setSymbol, etc...
-    setSearchQuery(cardName);
-    console.log('Searching for:', searchQuery);
+    //setSearchQuery(cardName);
+    console.log('Searching for:', cardName);
     try {
       const response = await fetch('http://localhost:3001/api/card', {
         method: 'POST',
@@ -29,7 +30,9 @@ function App() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          cardName: searchQuery
+          cardName,
+          setSymbol,
+          condition,
         })
       });
       
@@ -61,10 +64,17 @@ function App() {
         <SearchField
           value={setSymbol}
           parameter="setSymbol"
-          placeholder="Set symbol, e.g., 'KHM'"
+          placeholder="Set symbol, e.g., 'KLD'"
           onChange={(e) => setSetSymbol(e.target.value)}
         />
         <CardGrid cards={cards} />
+        {/* 
+       <SearchField
+          value={condition}
+          parameter="condition"
+          placeholder="Condition, e.g., 'NM'"
+          onChange={(e) => setCondition(e.target.value)}
+        />*/}
       </Container>
     </Box>
   );

@@ -1,4 +1,4 @@
-import { on } from 'events';
+
 import { SearchButton } from './SearchButton'
 import {
     Box,
