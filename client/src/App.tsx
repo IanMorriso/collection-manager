@@ -24,16 +24,17 @@ function App() {
     //setSearchQuery(cardName);
     console.log('Searching for:', cardName);
     try {
+      const requestBody = {
+        ...(cardName.trim() && { cardName }),
+        ...(setSymbol.trim() && { setSymbol }),
+        ...(condition.trim() && { condition })
+      }
       const response = await fetch('http://localhost:3001/api/card', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          cardName,
-          setSymbol,
-          condition,
-        })
+        body: JSON.stringify(requestBody)
       });
       
       const data = await response.json();
@@ -67,7 +68,7 @@ function App() {
           placeholder="Set symbol, e.g., 'KLD'"
           onChange={(e) => setSetSymbol(e.target.value)}
         />
-        <CardGrid cards={cards} />
+       
         {/* 
        <SearchField
           value={condition}
@@ -75,6 +76,10 @@ function App() {
           placeholder="Condition, e.g., 'NM'"
           onChange={(e) => setCondition(e.target.value)}
         />*/}
+      </Container>
+      <Container sx={{ mt: 4, textAlign: 'center' }}>
+        <Typography variant="h6">Search Results</Typography>
+        <CardGrid cards={cards} />
       </Container>
     </Box>
   );
