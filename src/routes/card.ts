@@ -5,17 +5,35 @@ export const cardRouter = express.Router();
 
 cardRouter.post('/', async (req, res) => {
   console.log('Received request:', req.body);
+
+
   try {
-    const { cardName, setSymbol } = req.body;
+    // Current search parameters
+    const { cardName, setSymbol, condition } = req.body;
 
     if (!cardName) {
       return res.status(400).json({ error: 'cardName is required' });
     }
 
+    // Builds filter for query
+    const filter = {
+      name_eq: cardName,
+      ...(setSymbol && { setCode_eq: setSymbol}), // Only takes one set symbol currently. Maybe change later?
+      ...(condition && { condition_eq: condition})
+
+    };
+
+    // Maps filter to string for GraphQL query
+    const filterString = Object.entries(filter)
+      .map(([key, value]) => `${key}: "${value}"`)
+      .join(', ');
+
+    // Search query for MTGJSON API
+    // - Work on adding/removing parameters later
     const query = `
       query {
         cards(
-          filter: { name_eq: "${cardName}", setCode_eq: "${setSymbol}"},
+          filter: { ${filterString}},
           page: { take: 100, skip: 0 }
           order: { order: ASC }
         ) {
@@ -34,6 +52,7 @@ cardRouter.post('/', async (req, res) => {
       }
     `;
 
+    // POST request for API
     const response = await axios.post(
       'https://graphql.mtgjson.com/',
       { query },

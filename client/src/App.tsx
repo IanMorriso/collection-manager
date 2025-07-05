@@ -19,11 +19,9 @@ function App() {
   const [cards, setCards] = useState<any[]>([]);
 
   const handleSearch = async () => {
-    // Only setting query to cardName for now
-    // Need to add setSymbol, etc...
-    //setSearchQuery(cardName);
     console.log('Searching for:', cardName);
     try {
+      // Conditionally builds request
       const requestBody = {
         ...(cardName.trim() && { cardName }),
         ...(setSymbol.trim() && { setSymbol }),
@@ -54,6 +52,7 @@ function App() {
         </Container>
       </AppBar>
 
+      {/* Container for search fields */}
       <Container>
         <SearchField
           value={cardName}
@@ -67,20 +66,21 @@ function App() {
           parameter="setSymbol"
           placeholder="Set symbol, e.g., 'KLD'"
           onChange={(e) => setSetSymbol(e.target.value)}
-        />
-       
-        {/* 
+        />       
        <SearchField
           value={condition}
           parameter="condition"
           placeholder="Condition, e.g., 'NM'"
           onChange={(e) => setCondition(e.target.value)}
-        />*/}
+        />
       </Container>
+
+      {/* Container for search results */}
       <Container sx={{ mt: 4, textAlign: 'center' }}>
         <Typography variant="h6">Search Results</Typography>
         <CardGrid cards={cards} />
       </Container>
+
     </Box>
   );
 }
