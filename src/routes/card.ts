@@ -1,13 +1,16 @@
 import express from 'express';
 import axios from 'axios';
 
-//import{ searchCards, getCards } from '../controllers/cardController';
+import{ createCard, getCards } from '../controllers/cardController';
 
 export const cardRouter = express.Router();
 
-//cardRouter.post('/', searchCards);
-//cardRouter.get('/', getCards);
+//cardRouter.post('/', createCard);
+cardRouter.post('/', getCards);
 
+
+
+/**
 cardRouter.post('/', async (req, res) => {
   console.log('Received request:', req.body);
 
@@ -87,3 +90,4 @@ cardRouter.post('/', async (req, res) => {
 cardRouter.get('/', async (req, res) => {
   res.status(501).json({ error: 'Not implemented: use POST to search for cards.' });
 });
+*/
