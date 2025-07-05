@@ -1,7 +1,12 @@
 import express from 'express';
 import axios from 'axios';
 
+//import{ searchCards, getCards } from '../controllers/cardController';
+
 export const cardRouter = express.Router();
+
+//cardRouter.post('/', searchCards);
+//cardRouter.get('/', getCards);
 
 cardRouter.post('/', async (req, res) => {
   console.log('Received request:', req.body);
@@ -47,6 +52,10 @@ cardRouter.post('/', async (req, res) => {
             cardType
             listType
             price
+          }
+          purchaseUrls {
+            cardKingdom
+
           }
         }
       }
