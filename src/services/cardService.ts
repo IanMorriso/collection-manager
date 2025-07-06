@@ -7,7 +7,7 @@ export const fetchCardsFromAPI = async (filters: any): Promise<ICardData[]> => {
     console.log('Received request:', filters);
 
     // Current search parameters
-    const { cardName, setSymbol, condition } = filters;
+    const { cardName, setSymbol, isFoil, isAlternative, isFullArt, frameEffects, frameVersion, condition } = filters;
 
     if (!cardName) {
         throw new Error('cardName is required');
@@ -17,8 +17,12 @@ export const fetchCardsFromAPI = async (filters: any): Promise<ICardData[]> => {
     const filter = {
         name_eq: cardName,
         ...(setSymbol && { setCode_eq: setSymbol}), // Only takes one set symbol currently. Maybe change later?
-        ...(condition && { condition_eq: condition})
-
+        ...(condition && { condition_eq: condition}),
+        ...(isFoil && { isFoil: isFoil }),
+        ...(isAlternative && { isAlternative: isAlternative }),
+        ...(isFullArt && { isFullArt: isFullArt }),
+        ...(frameEffects && { frameEffects: frameEffects }),
+        ...(frameVersion && { frameVersion: frameVersion })
     };
 
     // Maps filter to string for GraphQL query
@@ -46,10 +50,7 @@ export const fetchCardsFromAPI = async (filters: any): Promise<ICardData[]> => {
             listType
             price
             }
-            purchaseUrls {
-            cardKingdom
 
-            }
         }
         }
     `;
