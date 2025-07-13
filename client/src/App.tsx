@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import {
   AppBar,
   Box,
+  Card,
   Container,
   Typography,
 } from '@mui/material';
 import { CardGrid } from './components/CardGrid';
+import { CardItem } from './components/CardItem';
+import { SelectedCard } from './components/SelectedCard';
+import { Divider } from '@mui/material';
 import { SearchField } from './components/SearchField';
 import { set } from 'mongoose';
 
@@ -17,8 +21,36 @@ function App() {
   const [condition, setCondition] = useState('');
 
   const [cards, setCards] = useState<any[]>([]);
+  const [selectedCard, setSelectedCard] = useState<any>(null);
   const [isSearching, setIsSearching] = useState(false);
   const [lastSearchParams, setLastSearchParams] = useState<string>('');
+
+  const handleCardSelect = (card: any) => {
+    setSelectedCard(card);
+  };
+
+  const handleCardDeselect = () => {
+    setSelectedCard(null);
+  };
+
+  const handleCardUpdate = (updatedCard: any) => {
+    setSelectedCard(updatedCard);
+    // Optional: Update the card in the main cards array as well
+    setCards(prevCards => 
+      prevCards.map(card => 
+        card.name === updatedCard.name && card.setCode === updatedCard.setCode 
+          ? updatedCard 
+          : card
+      )
+    );
+  };
+
+  const getOrderedCards = () => {
+    if (!selectedCard) return cards;
+
+    const otherCards = cards.splice(selectedCard.key, 1)//cards.filter(card => !(card.name === selectedCard.name && card.setCode === selectedCard.setCode));
+    return [selectedCard, ...cards];
+  }
 
   const handleSearch = async () => {
     // Prevent multiple simultaneous searches
@@ -66,6 +98,7 @@ function App() {
       }
       
       const data = await response.json();
+      setSelectedCard(null);
       setCards(Array.isArray(data) ? data : []);
       setLastSearchParams(searchParams);
       
@@ -111,10 +144,26 @@ function App() {
         />
       </Container>
 
+      {/* Selected Card Section - Add this */}
+      {selectedCard && (
+        <Container sx={{ mt: 4, mb: 4 }}>
+          <SelectedCard 
+            card={selectedCard}
+            onUpdate={handleCardUpdate}
+            onDeselect={handleCardDeselect}
+          />
+          <Divider sx={{ mt: 4 }} />
+        </Container>
+      )}
+
       {/* Container for search results */}
       <Container sx={{ mt: 4, textAlign: 'center' }}>
         <Typography variant="h6">Search Results</Typography>
-        <CardGrid cards={cards} />
+        <CardGrid 
+          cards={cards} 
+          selectedCard={null}
+          onCardSelect={handleCardSelect}
+        />
       </Container>
 
     </Box>
