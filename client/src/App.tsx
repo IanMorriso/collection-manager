@@ -17,9 +17,32 @@ function App() {
   const [condition, setCondition] = useState('');
 
   const [cards, setCards] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [lastSearchParams, setLastSearchParams] = useState<string>('');
 
   const handleSearch = async () => {
+    // Prevent multiple simultaneous searches
+    if (isSearching) {
+      console.log('Search already in progress, skipping...');
+      return;
+    }
+
+    // Create search params string for deduplication
+    const searchParams = JSON.stringify({
+      cardName: cardName.trim(),
+      setSymbol: setSymbol.trim(),
+      condition: condition.trim()
+    });
+
+    // Prevent duplicate searches
+    if (searchParams === lastSearchParams) {
+      console.log('Duplicate search detected, skipping...');
+      return;
+    }
+
     console.log('Searching for:', cardName);
+    setIsSearching(true);
+    
     try {
       // Conditionally builds request
       const requestBody = {
@@ -27,6 +50,9 @@ function App() {
         ...(setSymbol.trim() && { setSymbol }),
         ...(condition.trim() && { condition })
       }
+
+      console.log('Making API request with:', requestBody);
+      
       const response = await fetch('http://localhost:3001/api/card', {
         method: 'POST',
         headers: {
@@ -35,10 +61,19 @@ function App() {
         body: JSON.stringify(requestBody)
       });
       
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       setCards(Array.isArray(data) ? data : []);
+      setLastSearchParams(searchParams);
+      
     } catch (error) {
       console.error('Error fetching card data:', error);
+      setCards([]);
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -60,6 +95,7 @@ function App() {
           onChange={(e) => setCardName(e.target.value)}
           onSearch={handleSearch}
           showButton={true}
+          disabled={isSearching}
         />
         <SearchField
           value={setSymbol}

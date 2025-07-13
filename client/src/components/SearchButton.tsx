@@ -4,12 +4,13 @@ import SearchIcon from '@mui/icons-material/Search';
 
 interface SearchButtonProps {
   onClick: () => void;
+  disabled?: boolean;
 }
 
-export function SearchButton({ onClick }: SearchButtonProps) {
+export function SearchButton({ onClick, disabled }: SearchButtonProps) {
   return (
     <InputAdornment position="end">
-      <IconButton onClick={onClick}>
+      <IconButton onClick={onClick} disabled={disabled}>
         <SearchIcon />
       </IconButton>
     </InputAdornment>
