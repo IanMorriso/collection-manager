@@ -12,9 +12,10 @@ interface SearchFieldProps {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onSearch?: () => void;
     showButton?: boolean;
+    disabled?: boolean;
 }
 
-export function SearchField({ value, placeholder, onChange, onSearch, showButton }: SearchFieldProps) {
+export function SearchField({ value, placeholder, onChange, onSearch, showButton, disabled }: SearchFieldProps) {
     return (
         <Box sx={{ mb: 4 }}>
             
@@ -23,10 +24,11 @@ export function SearchField({ value, placeholder, onChange, onSearch, showButton
                 placeholder={placeholder || "Search for a card..."}
                 value={value}
                 onChange={onChange}
+                disabled={disabled}
                 onKeyDown={showButton ? (e) => e.key === 'Enter' && onSearch && onSearch() : undefined}
                 InputProps={{
                     endAdornment: showButton && onSearch ?(
-                        <SearchButton onClick={onSearch} />
+                        <SearchButton onClick={onSearch} disabled={disabled} />
                     ) : undefined,
                 }}
             />

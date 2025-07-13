@@ -3,8 +3,44 @@ import axios from 'axios';
 
 import CardData, { ICardData } from '../models/CardData';
 
+// Simple in-memory cache to prevent duplicate API calls
+const cache = new Map<string, { data: ICardData[], timestamp: number }>();
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Rate limiting
+const rateLimitMap = new Map<string, number[]>();
+const MAX_REQUESTS_PER_MINUTE = 5;
+
+// Request counter for debugging
+let requestCounter = 0;
+
+const isRateLimited = (clientId: string = 'default'): boolean => {
+    const now = Date.now();
+    const requests = rateLimitMap.get(clientId) || [];
+    
+    // Remove requests older than 1 minute
+    const recentRequests = requests.filter(time => now - time < 60000);
+    
+    if (recentRequests.length >= MAX_REQUESTS_PER_MINUTE) {
+        return true;
+    }
+    
+    // Add current request
+    recentRequests.push(now);
+    rateLimitMap.set(clientId, recentRequests);
+    
+    return false;
+};
+
 export const fetchCardsFromAPI = async (filters: any): Promise<ICardData[]> => {
-    console.log('Received request:', filters);
+    requestCounter++;
+    console.log(`API Request #${requestCounter} - Received request:`, filters);
+
+    // Rate limiting check
+    if (isRateLimited()) {
+        console.log('Rate limited - too many requests');
+        throw new Error('Rate limit exceeded. Please wait before making another request.');
+    }
 
     // Current search parameters
     const { cardName, setSymbol, isFoil, isAlternative, isFullArt, frameEffects, frameVersion, condition } = filters;
@@ -12,6 +48,18 @@ export const fetchCardsFromAPI = async (filters: any): Promise<ICardData[]> => {
     if (!cardName) {
         throw new Error('cardName is required');
     }
+
+    // Create cache key
+    const cacheKey = JSON.stringify(filters);
+    const cachedResult = cache.get(cacheKey);
+    
+    // Check cache first
+    if (cachedResult && Date.now() - cachedResult.timestamp < CACHE_DURATION) {
+        console.log('Returning cached result for:', cacheKey);
+        return cachedResult.data;
+    }
+
+    console.log('Making API request for:', cacheKey);
 
     // Builds filter for query
     const filter = {
@@ -70,7 +118,20 @@ export const fetchCardsFromAPI = async (filters: any): Promise<ICardData[]> => {
 
     console.log('API response:', response.data);
 
-    return response.data?.data?.cards || [];
+    const cards = response.data?.data?.cards || [];
+    
+    // Cache the result
+    cache.set(cacheKey, { data: cards, timestamp: Date.now() });
+    
+    // Clean up old cache entries
+    if (cache.size > 100) {
+        const entries = Array.from(cache.entries());
+        entries.sort((a, b) => a[1].timestamp - b[1].timestamp);
+        const oldestKey = entries[0][0];
+        cache.delete(oldestKey);
+    }
+
+    return cards;
 };
 
 export const saveCardToDB = async (cardData: ICardData): Promise<ICardData> => {
