@@ -2,17 +2,33 @@ import {
     Card,
     CardContent,
     Typography,
-    Box
+    Box,
+    CardActionArea
 } from '@mui/material';
 
 interface CardProps {
     card: any;
+    onSelect?: (card: any) => void;
 }
 
-export function CardItem({ card }: CardProps) {
+export function CardItem({ card, onSelect }: CardProps) {
+    const handleClick = () => {
+        if (onSelect) {
+            onSelect(card);
+        }
+    };
+
     return (
-        <Card>
-            <CardContent>
+        <Card sx={{ 
+            height: '100%',
+            transition: 'all 0.2s ease-in-out',
+            '&:hover': {
+                transform: 'translateY(-4px)',
+                boxShadow: 4
+            }
+        }}>
+            <CardActionArea onClick={handleClick} sx={{ height: '100%' }}>
+                <CardContent>
                 <Typography variant="h6" gutterBottom>
                     {card.name}
                 </Typography>
@@ -33,7 +49,8 @@ export function CardItem({ card }: CardProps) {
                     </Typography>
                 </Box>
                 )}
-            </CardContent>
+                </CardContent>
+            </CardActionArea>
         </Card>
     );
 }  

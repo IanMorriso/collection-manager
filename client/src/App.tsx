@@ -7,7 +7,7 @@ import {
 } from '@mui/material';
 import { CardGrid } from './components/CardGrid';
 import { SearchField } from './components/SearchField';
-import { set } from 'mongoose';
+import { CardModal } from './components/CardModal';
 
 
 function App() {
@@ -19,6 +19,7 @@ function App() {
   const [cards, setCards] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [lastSearchParams, setLastSearchParams] = useState<string>('');
+  const [selectedCard, setSelectedCard] = useState<any>(null);
 
   const handleSearch = async () => {
     // Prevent multiple simultaneous searches
@@ -77,6 +78,14 @@ function App() {
     }
   };
 
+  const handleCardSelect = (card: any) => {
+    setSelectedCard(card);
+  };
+
+  const handleCardClose = () => {
+    setSelectedCard(null);
+  };
+
   return (
     <Box sx={{ flexGrow: 1, minHeight: '100vh' }}>
       <AppBar position="static" sx={{ mb: 4 }}>
@@ -114,8 +123,15 @@ function App() {
       {/* Container for search results */}
       <Container sx={{ mt: 4, textAlign: 'center' }}>
         <Typography variant="h6">Search Results</Typography>
-        <CardGrid cards={cards} />
+        <CardGrid cards={cards} onCardSelect={handleCardSelect} />
       </Container>
+
+      {/* Card Selection Modal */}
+      <CardModal 
+        card={selectedCard}
+        open={!!selectedCard}
+        onClose={handleCardClose}
+      />
 
     </Box>
   );
