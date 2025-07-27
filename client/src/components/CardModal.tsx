@@ -25,6 +25,7 @@ interface CardModalProps {
   card: any;
   open: boolean;
   onClose: () => void;
+  onSave?: (cardData: any) => void;
 }
 
 const modalStyle = {
@@ -42,7 +43,7 @@ const modalStyle = {
   p: 0,
 };
 
-export function CardModal({ card, open, onClose }: CardModalProps) {
+export function CardModal({ card, open, onClose, onSave }: CardModalProps) {
   // Form state for collection data
   const [collectionData, setCollectionData] = useState({
     purchasePrice: '',
@@ -96,7 +97,11 @@ export function CardModal({ card, open, onClose }: CardModalProps) {
     };
 
     console.log('Saving card to collection:', cardToSave);
-    // TODO: Implement actual save functionality
+    
+    if (onSave) {
+      onSave(cardToSave);
+    }
+
     onClose();
   };
 

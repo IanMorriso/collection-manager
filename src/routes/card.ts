@@ -6,7 +6,8 @@ import{ createCard, getCards } from '../controllers/cardController';
 export const cardRouter = express.Router();
 
 //cardRouter.post('/', createCard);
-cardRouter.post('/', getCards);
+cardRouter.post('/search', getCards);
+cardRouter.post('/save', createCard);
 
 
 

@@ -141,6 +141,18 @@ export const saveCardToDB = async (savedCard: ISavedCard): Promise<ISavedCard> =
 
 
 /**
+export const saveCardToCollection = async (savedCard: ISavedCard): Promise<ISavedCard> => {
+    const response = await fetch('http://localhost:3001/api/card/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(savedCard)
+      });
+      
+      return await response.json();
+}
+*/
+
+/**
 export const saveSelectedCardsToDB = async (savedCards: ISavedCard[]): Promise<ISavedCard> => {
 
 }

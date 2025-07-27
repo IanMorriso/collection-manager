@@ -9,6 +9,9 @@ import { CardGrid } from './components/CardGrid';
 import { SearchField } from './components/SearchField';
 import { CardModal } from './components/CardModal';
 
+import { saveCardToCollection } from './services/cardService';
+import { searchCards } from './services/cardService';
+
 
 function App() {
   //const [searchQuery, setSearchQuery] = useState('');
@@ -20,55 +23,45 @@ function App() {
   const [isSearching, setIsSearching] = useState(false);
   const [lastSearchParams, setLastSearchParams] = useState<string>('');
   const [selectedCard, setSelectedCard] = useState<any>(null);
+  const [saving, setIsSaving] = useState(false);
 
   const handleSearch = async () => {
-    // Prevent multiple simultaneous searches
     if (isSearching) {
       console.log('Search already in progress, skipping...');
       return;
     }
-
-    // Create search params string for deduplication
-    const searchParams = JSON.stringify({
+  
+    /**
+    const searchParams = {
       cardName: cardName.trim(),
       setSymbol: setSymbol.trim(),
       condition: condition.trim()
-    });
+    };
+  */
 
-    // Prevent duplicate searches by checking previous search parameters
-    if (searchParams === lastSearchParams) {
-      console.log('Duplicate search detected, skipping...');
-      return;
-    }
+  
 
-    console.log('Searching for:', cardName);
-    setIsSearching(true);
+  
+
     
     try {
-      // Conditionally builds API request
       const requestBody = {
         ...(cardName.trim() && { cardName }),
         ...(setSymbol.trim() && { setSymbol }),
         ...(condition.trim() && { condition })
-      }
+      };
+      const searchParamsString = JSON.stringify(requestBody);
 
-      console.log('Making API request with:', requestBody);
-      
-      const response = await fetch('http://localhost:3001/api/card', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestBody)
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (searchParamsString === lastSearchParams) {
+        console.log('Duplicate search detected, skipping...');
+        return;
       }
-      
-      const data = await response.json();
+      console.log('Searching for:', cardName);
+      setIsSearching(true);
+  
+      const data = await searchCards(requestBody);
       setCards(Array.isArray(data) ? data : []);
-      setLastSearchParams(searchParams);
+      setLastSearchParams(searchParamsString);
       
     } catch (error) {
       console.error('Error fetching card data:', error);
@@ -77,6 +70,19 @@ function App() {
       setIsSearching(false);
     }
   };
+
+  const handleSaveCard = async (cardData: any) => {
+    try{
+      setIsSaving(true);
+      await saveCardToCollection(cardData)
+      setSelectedCard(null);
+      console.log("Card saved sucessfully")
+    } catch (error) {
+      console.error("Failed to save card!", error);
+    } finally {
+      setIsSaving(false);
+    }
+  }
 
   const handleCardSelect = (card: any) => {
     setSelectedCard(card);
@@ -131,6 +137,7 @@ function App() {
         card={selectedCard}
         open={!!selectedCard}
         onClose={handleCardClose}
+        onSave={handleSaveCard}
       />
 
     </Box>
