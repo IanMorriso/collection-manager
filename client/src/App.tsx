@@ -34,7 +34,7 @@ function App() {
       condition: condition.trim()
     });
 
-    // Prevent duplicate searches
+    // Prevent duplicate searches by checking previous search parameters
     if (searchParams === lastSearchParams) {
       console.log('Duplicate search detected, skipping...');
       return;
@@ -44,7 +44,7 @@ function App() {
     setIsSearching(true);
     
     try {
-      // Conditionally builds request
+      // Conditionally builds API request
       const requestBody = {
         ...(cardName.trim() && { cardName }),
         ...(setSymbol.trim() && { setSymbol }),

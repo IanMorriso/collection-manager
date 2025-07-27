@@ -1,10 +1,10 @@
 import express from 'express';
 import axios from 'axios';
 
-import CardData, { ICardData } from '../models/CardData';
+import SavedCard, { ISavedCard } from '../models/SavedCard';
 
 // Simple in-memory cache to prevent duplicate API calls
-const cache = new Map<string, { data: ICardData[], timestamp: number }>();
+const cache = new Map<string, { data: ISavedCard[], timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 // Rate limiting
@@ -32,7 +32,7 @@ const isRateLimited = (clientId: string = 'default'): boolean => {
     return false;
 };
 
-export const fetchCardsFromAPI = async (filters: any): Promise<ICardData[]> => {
+export const fetchCardsFromAPI = async (filters: any): Promise<ISavedCard[]> => {
     requestCounter++;
     console.log(`API Request #${requestCounter} - Received request:`, filters);
 
@@ -134,8 +134,14 @@ export const fetchCardsFromAPI = async (filters: any): Promise<ICardData[]> => {
     return cards;
 };
 
-export const saveCardToDB = async (cardData: ICardData): Promise<ICardData> => {
-    const card = new CardData(cardData);
+export const saveCardToDB = async (savedCard: ISavedCard): Promise<ISavedCard> => {
+    const card = new SavedCard(savedCard);
     return await card.save();
 };
 
+
+/**
+export const saveSelectedCardsToDB = async (savedCards: ISavedCard[]): Promise<ISavedCard> => {
+
+}
+*/
