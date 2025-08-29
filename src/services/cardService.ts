@@ -136,6 +136,7 @@ export const fetchCardsFromAPI = async (filters: any): Promise<ISavedCard[]> => 
 
 export const saveCardToDB = async (savedCard: ISavedCard): Promise<ISavedCard> => {
     const card = new SavedCard(savedCard);
+    console.log("Card to save: ", card)
     return await card.save();
 };
 
